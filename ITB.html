@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Submit Name</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #f8f9fa, #e9ecef);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    .logo {
+      font-size: 2.5rem;
+      font-weight: bold;
+      color: #2c3e50;
+      margin-bottom: 30px;
+      text-align: center;
+      word-wrap: break-word;
+    }
+
+    .container {
+      background: #ffffff;
+      padding: 40px 30px;
+      border-radius: 12px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+      text-align: center;
+      width: 100%;
+      max-width: 400px;
+      box-sizing: border-box;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 12px;
+      font-size: 1rem;
+      border: 1px solid #ced4da;
+      border-radius: 6px;
+      margin-bottom: 20px;
+      box-sizing: border-box;
+    }
+
+    button {
+      width: 100%;
+      background-color: #007bff;
+      color: white;
+      padding: 12px;
+      border: none;
+      border-radius: 6px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .output {
+      margin-top: 20px;
+      font-size: 1rem;
+      color: #212529;
+      word-wrap: break-word;
+    }
+
+    .loading {
+      color: #ffc107;
+    }
+
+    .success {
+      color: #28a745;
+    }
+
+    .error {
+      color: #dc3545;
+    }
+
+    /* Responsive typography for smaller screens */
+    @media (max-width: 400px) {
+      .logo {
+        font-size: 2rem;
+        margin-bottom: 20px;
+      }
+      
+      .container {
+        padding: 30px 20px;
+      }
+
+      input[type="text"],
+      button {
+        font-size: 0.9rem;
+        padding: 10px;
+      }
+
+      .output {
+        font-size: 0.9rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="logo">Student IT-B</div>
+  <p>Kung hindi ka IT-B wag ka mag lagay ng name mo merong link para sainyo</p>
+
+  <div class="container">
+    <h2>Enter Your Full Name</h2>
+    <input type="text" id="fullNameInput" placeholder="Your Full Name"/>
+    <button onclick="submitName()">Submit</button>
+    <div class="output" id="output"></div>
+  </div>
+
+  <script>
+    // Paste your deployed Google Apps Script Web App URL here:
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyroXeCURRgGmcu_mZwCfoS-SBSVzOPaBFHYbYiKRbtn1DSZd29JyaF8eW0oZaXm9ti/exec";
+
+    function submitName() {
+      const nameField = document.getElementById("fullNameInput");
+      const output = document.getElementById("output");
+      const name = nameField.value.trim();
+
+      if (name === "") {
+        output.textContent = "Please enter your full name.";
+        output.className = "output error";
+        return;
+      }
+
+      output.textContent = "Submitting...";
+      output.className = "output loading";
+
+      fetch(SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `name=${encodeURIComponent(name)}`
+      })
+      .then(response => response.text())
+      .then(result => {
+        if(result.includes("Success")) {
+          output.textContent = `Thank you, ${name}. Your name has been recorded.`;
+          output.className = "output success";
+          nameField.value = "";
+        } else {
+          output.textContent = result;
+          output.className = "output error";
+        }
+      })
+      .catch(error => {
+        output.textContent = "Something went wrong. Please try again later.";
+        output.className = "output error";
+        console.error("Error!", error.message);
+      });
+    }
+  </script>
+
+</body>
+</html>
